@@ -13,30 +13,28 @@ vector<int> lisArr;
 
 void lis(int V[], int n)
 {
-	//int * r = (int*)malloc(sizeof(int) * n);
-	////int * s = (int*)malloc(sizeof(int) * n);
-	//
-	//memset(r, 1, n * sizeof(int));
-	//
-	//lisArr = vector<int>();
-	//
-	//for (int i = 1; i < n; i++)
-	//{
-	//	for (int j = 0; j < i; j++)
-	//	{
-	//		if (V[i] > V[j] && r[i] < r[j] + 1)
-	//		{
-	//			r[i] = r[j] + 1;
-	//			lisArr.push_back(V[j]);
-	//		}
-	//	}
-	//}
+	int * r = (int*)malloc(sizeof(int) * n);
+	//int * s = (int*)malloc(sizeof(int) * n);
 
-	//vector<vector<int>> L(n);
-	//
-	//L[0].push_back(V[0]);
+	for (int i = 0; i < n; i++)
+	{
+		r[i] = 1;
+	}
+	
+	lisArr = vector<int>();
+	
+	for (int i = 1; i < n; i++)
+	{
+		for (int j = 0; j < i; j++)
+		{
+			if (V[i] > V[j] && r[i] < r[j] + 1)
+			{
+				r[i] = r[j] + 1;
+			}
+		}
+	}
 
-
+	delete[] r;
 }
 
 int main()
