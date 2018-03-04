@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <string>
 #include <stdlib.h>
 #include <vector>
 
@@ -80,10 +81,14 @@ int morseCode(char V[], int n)
 
 	// first, determine if we can even return any values
 	// potentially loop through to make sure we don't just have "-"
-	vector<int> candidateSizes = vector<int>(n);
+	vector<int> candidateSizes;
 
 	// assume we have no vowels to start with
-	candidateSizes.push_back(1);
+	if (V[0] == '.' || n > 2)
+		candidateSizes.push_back(1);
+	else if (V[0] == '-' && n < 3)
+		candidateSizes.push_back(0);
+
 
 	for (i = 1; i < n; i++)
 	{
@@ -93,39 +98,62 @@ int morseCode(char V[], int n)
 		for (j = 0; j < vowelArrSize; j++)
 		{
 			 // be sure we even can build a letter
-			if (strlen(vowelArr[j]) > i)
+			if (strlen(vowelArr[j]) > i) continue;
+
+			// take a substring representing our morse code val
+			char * subBuffer = new char[i - (i - strlen(vowelArr[j])) + 1];
+			memcpy(subBuffer, V, i - (i - strlen(vowelArr[j])));
+			subBuffer[i - (i - strlen(vowelArr[j]))] = '\0';
+
+			//if ((char *)V[i] == vowelArr[j])
+			//	count += candidateSizes[i - strlen(vowelArr[j])];
+
+			if (strcmp(vowelArr[j], subBuffer) == 0)
 			{
-				// take a substring representing our morse code val
-				char * subBuffer = new char[i - (i - strlen(vowelArr[j])) + 1];
-				memcpy(subBuffer, V, i - (i - strlen(vowelArr[j])));
-				subBuffer[i - (i - strlen(vowelArr[j]))] = '\0';
-
-				if (strcmp(vowelArr[j], subBuffer) == 0)
-				{
-					//if (i - strlen(vowelArr[j]) < 0)
-					//	count += candidateSizes[0];
-					//else
-					printf("%d\n",i - (i - strlen(vowelArr[j])));
-					count += candidateSizes[i - (i - strlen(vowelArr[j]))];
-					//count += 1;
-				}
-
-				// free mem of substring
-				delete subBuffer;
+				//if (i - strlen(vowelArr[j]) < 0)
+				//	count += candidateSizes[0];
+				//else
+				//printf("%d\n", candidateSizes[i - strlen(vowelArr[j])]);
+				count += candidateSizes[i - strlen(vowelArr[j])];
+				//count += 1;
+				//count += candidateSizes[abs(j - i)];
 			}
+
+			// free mem of substring
+			delete subBuffer;
 		}
-		candidateSizes.push_back(count);
+		if (count > 0)
+			candidateSizes.push_back(count);
 	}
 
-	return candidateSizes[strlen(V) - 1];
+	return candidateSizes.back();
 }
+
+/*int stringMorse(string morse_string)
+{
+	string vowelArr[] = { ".-", ".", "..", "---", "..-" };
+	int vowelArrSize = 5;
+	vector<long>dp;
+	dp.push_back(1);
+	for (int i = 0; i<morse_string.size(); i++) {
+		long count = 0;
+		for (int j = 1; j<vowelArrSize; j++) {
+			if (vowelArr[j].size() > i) continue;
+			if (vowelArr[j] == morse_string.substr(i - vowelArr[j].size(), i)) {
+				count += dp[i - vowelArr[j].size()];
+			}
+		}
+		dp.push_back(count);
+	}
+	return dp[morse_string.size()];
+}*/
 
 /// main works as the driver for both of our algorithms in this case.
 int main()
 {
 	// allocate space for array
 	int initialVay[] = { 9, 15, 3, 6, 4, 2, 5, 10, 3};
-	char * initMorseArray = "..";
+	char * initMorseArray = "..-";
 
 	// call LIS function
 	vector<int> maxLIS = lis(initialVay, 9);
