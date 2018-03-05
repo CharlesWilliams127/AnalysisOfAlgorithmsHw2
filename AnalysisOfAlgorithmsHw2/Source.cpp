@@ -3,12 +3,14 @@
 #include <string>
 #include <stdlib.h>
 #include <vector>
+#include <iostream>
+#include <fstream>
 
 using namespace std;
 
 // file name of LIS question for problem two
-const char* lisFileName = "something"; // TODO: add file name/reading
-const char* morseCodeFileName = "something"; // TODO: add file name/reading
+const char* lisFileName = "lisInput.txt";
+const char* morseCodeFileName = "morseInput.txt";
 
 /// My implementation of LIS includes a vector of vectors to eliminate
 /// recursion and dynamically program this function. Each vector within
@@ -18,7 +20,7 @@ const char* morseCodeFileName = "something"; // TODO: add file name/reading
 /// V : the initial array to iterate through
 /// n : the size of the initial array
 /// return value: the LIS of V
-vector<int> lis(int V[], int n)
+vector<int> lis(vector<int> V, int n)
 {
 	int  i, j;
 	vector<int> maxLIS;
@@ -76,7 +78,7 @@ int morseCode(char V[], int n)
 
 	// first define an array of values that we care about (only vowels)
 	// A, E, I, O, U
-	char * vowelArr[] = { ".-", ".", "..", "---", "..-" };
+	char * vowelArr[] = { (char *)".-", (char *)".", (char *)"..", (char *)"---", (char *)"..-" };
 	int vowelArrSize = 5;
 
 	// first, determine if we can even return any values
@@ -129,38 +131,62 @@ int morseCode(char V[], int n)
 	return candidateSizes.back();
 }
 
-/*int stringMorse(string morse_string)
-{
-	string vowelArr[] = { ".-", ".", "..", "---", "..-" };
-	int vowelArrSize = 5;
-	vector<long>dp;
-	dp.push_back(1);
-	for (int i = 0; i<morse_string.size(); i++) {
-		long count = 0;
-		for (int j = 1; j<vowelArrSize; j++) {
-			if (vowelArr[j].size() > i) continue;
-			if (vowelArr[j] == morse_string.substr(i - vowelArr[j].size(), i)) {
-				count += dp[i - vowelArr[j].size()];
-			}
-		}
-		dp.push_back(count);
-	}
-	return dp[morse_string.size()];
-}*/
-
 /// main works as the driver for both of our algorithms in this case.
 int main()
 {
-	// allocate space for array
-	int initialVay[] = { 9, 15, 3, 6, 4, 2, 5, 10, 3};
-	char * initMorseArray = "..-";
+	char * initMorseArray = (char *)"---";
+
+	// initial vectors for i/o
+	vector<string> lisInitVecString;
+	vector<string> morseInitVecString;
+
+	// final vectors
+	vector<int> lisInput;
+	char * morseInput;
+
+	// read in both files
+	string line = "";
+	ifstream lisFile(lisFileName);
+
+	if (lisFile.is_open())
+	{
+		while (getline(lisFile, line, ' '))
+		{
+			lisInitVecString.push_back(line);
+		}
+	}
+	// convert 
+	for (int i = 0; i < lisInitVecString.size(); i++)
+	{
+		int num = atoi(lisInitVecString.at(i).c_str());
+		lisInput.push_back(num);
+	}
+
+	ifstream morseFile(morseCodeFileName);
+
+	if (morseFile.is_open())
+	{
+		while (getline(morseFile, line, ' '))
+		{
+			morseInitVecString.push_back(line);
+		}
+	}
+
+	morseInput = new char[morseInitVecString.size()];
+
+	for (int i = 0; i < morseInitVecString.size(); i++)
+	{
+		morseInput[i] = morseInitVecString[i].c_str()[0];
+	}
 
 	// call LIS function
-	vector<int> maxLIS = lis(initialVay, 9);
+	vector<int> maxLIS = lis(lisInput, lisInput.size());
 
 	// call morse code function
-	int numMorse = morseCode(initMorseArray, 3);
+	int numMorse = morseCode(morseInput, morseInitVecString.size());
 	printf("Morse: %d\n", numMorse);
+
+	delete morseInput;
 	
 	printf("Final LIS:\n");
 	for (int i = 0; i < maxLIS.size(); i++)
