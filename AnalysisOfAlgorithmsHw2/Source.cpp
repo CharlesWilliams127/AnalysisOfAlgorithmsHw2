@@ -85,14 +85,12 @@ int morseCode(char V[], int n)
 	// potentially loop through to make sure we don't just have "-"
 	vector<int> candidateSizes;
 
-	// assume we have no vowels to start with
-	if (V[0] == '.' || n > 2)
-		candidateSizes.push_back(1);
-	else if (V[0] == '-' && n < 3)
-		candidateSizes.push_back(0);
+	// assume we have a match to start with
+	candidateSizes.push_back(1);
 
+	int iterator = 0;
 
-	for (i = 1; i < n; i++)
+	for (i = 1; i <= n; i++)
 	{
 		int count = 0;
 
@@ -104,28 +102,17 @@ int morseCode(char V[], int n)
 
 			// take a substring representing our morse code val
 			char * subBuffer = new char[i - (i - strlen(vowelArr[j])) + 1];
-			memcpy(subBuffer, V, i - (i - strlen(vowelArr[j])));
+			memcpy(subBuffer, (V + i) - strlen(vowelArr[j]), (i -(i - strlen(vowelArr[j]))));
 			subBuffer[i - (i - strlen(vowelArr[j]))] = '\0';
-
-			//if ((char *)V[i] == vowelArr[j])
-			//	count += candidateSizes[i - strlen(vowelArr[j])];
 
 			if (strcmp(vowelArr[j], subBuffer) == 0)
 			{
-				//if (i - strlen(vowelArr[j]) < 0)
-				//	count += candidateSizes[0];
-				//else
-				//printf("%d\n", candidateSizes[i - strlen(vowelArr[j])]);
-				count += candidateSizes[i - strlen(vowelArr[j])];
-				//count += 1;
-				//count += candidateSizes[abs(j - i)];
+					count += candidateSizes[i - strlen(vowelArr[j])];
 			}
-
 			// free mem of substring
 			delete subBuffer;
 		}
-		if (count > 0)
-			candidateSizes.push_back(count);
+		candidateSizes.push_back(count);
 	}
 
 	return candidateSizes.back();
@@ -134,8 +121,6 @@ int morseCode(char V[], int n)
 /// main works as the driver for both of our algorithms in this case.
 int main()
 {
-	char * initMorseArray = (char *)"---";
-
 	// initial vectors for i/o
 	vector<string> lisInitVecString;
 	vector<string> morseInitVecString;
@@ -144,7 +129,7 @@ int main()
 	vector<int> lisInput;
 	char * morseInput;
 
-	// read in both files
+	// read in lis file
 	string line = "";
 	ifstream lisFile(lisFileName);
 
@@ -155,13 +140,14 @@ int main()
 			lisInitVecString.push_back(line);
 		}
 	}
-	// convert 
+	// convert string to int
 	for (int i = 0; i < lisInitVecString.size(); i++)
 	{
 		int num = atoi(lisInitVecString.at(i).c_str());
 		lisInput.push_back(num);
 	}
 
+	// read in morse code file
 	ifstream morseFile(morseCodeFileName);
 
 	if (morseFile.is_open())
