@@ -72,6 +72,16 @@ vector<int> lis(vector<int> V, int n)
 	return maxLIS;
 }
 
+/// My implementation of the morse code algorithm involves a bottom-up
+/// approach and two for loops. It should still run in O(n) time
+/// however, since the inner loop runs a constant 5 times each
+/// iteration. Minor pointer arithmetic is done to determine where
+/// to create substrings and what to compare them to.
+/// params:
+/// V : initial sequence of morse code digits
+/// n : length of V
+/// retrun value : the combination of subsequences of letters that
+/// make up V
 int morseCode(char V[], int n)
 {
 	int i, j;
@@ -88,10 +98,12 @@ int morseCode(char V[], int n)
 	// assume we have a match to start with
 	candidateSizes.push_back(1);
 
-	int iterator = 0;
-
+	// iterate through each morse code char and see if any match our
+	// set array of vowels
 	for (i = 1; i <= n; i++)
 	{
+		// this is a per-iteration variable, it represents how many
+		// "matches" we have for this particular i value
 		int count = 0;
 
 		// check if we can build each letter
@@ -100,7 +112,11 @@ int morseCode(char V[], int n)
 			 // be sure we even can build a letter
 			if (strlen(vowelArr[j]) > i) continue;
 
-			// take a substring representing our morse code val
+			// take a substring representing our current value 'i'
+			// but we then must go back depending on how long our
+			// current vowel array value is, once we have our starting
+			// index, we index into the array from 'i' to 'i' minus the
+			// length of the vowel code we are currently on
 			char * subBuffer = new char[i - (i - strlen(vowelArr[j])) + 1];
 			memcpy(subBuffer, (V + i) - strlen(vowelArr[j]), (i -(i - strlen(vowelArr[j]))));
 			subBuffer[i - (i - strlen(vowelArr[j]))] = '\0';
@@ -109,12 +125,17 @@ int morseCode(char V[], int n)
 			{
 					count += candidateSizes[i - strlen(vowelArr[j])];
 			}
+
 			// free mem of substring
 			delete subBuffer;
 		}
+		
+		// always push the value to the back to represent how many 
+		// "matches" we got this iteration
 		candidateSizes.push_back(count);
 	}
 
+	// the last count should be our final count for the algorithm
 	return candidateSizes.back();
 }
 
@@ -160,6 +181,7 @@ int main()
 
 	morseInput = new char[morseInitVecString.size()];
 
+	// translate initial vector into char *
 	for (int i = 0; i < morseInitVecString.size(); i++)
 	{
 		morseInput[i] = morseInitVecString[i].c_str()[0];
